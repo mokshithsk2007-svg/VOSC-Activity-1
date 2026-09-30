@@ -1,0 +1,292 @@
+/* ---------- Theme variables ---------- */
+:root {
+  --bg-1: #0f172a;
+  --bg-2: #1e1b4b;
+  --card: rgba(255, 255, 255, 0.07);
+  --card-border: rgba(255, 255, 255, 0.14);
+  --cell: rgba(255, 255, 255, 0.08);
+  --cell-hover: rgba(255, 255, 255, 0.16);
+  --text: #f1f5f9;
+  --muted: #94a3b8;
+  --x-color: #38bdf8;
+  --o-color: #f472b6;
+  --win: #facc15;
+  --radius: 16px;
+}
+
+/* ---------- Base ---------- */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  font-family: "Segoe UI", system-ui, -apple-system, Roboto, Arial, sans-serif;
+  color: var(--text);
+  background: linear-gradient(135deg, var(--bg-1), var(--bg-2), #312e81);
+  background-size: 300% 300%;
+  animation: bgShift 14s ease infinite;
+}
+
+@keyframes bgShift {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* ---------- Game card ---------- */
+.game {
+  width: min(100%, 440px);
+  padding: 28px 24px;
+  text-align: center;
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  border-radius: 24px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  animation: cardIn 0.6s ease both;
+}
+
+@keyframes cardIn {
+  from { opacity: 0; transform: translateY(24px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.title {
+  font-size: clamp(1.7rem, 6vw, 2.3rem);
+  letter-spacing: 1px;
+  margin-bottom: 18px;
+}
+
+.title span {
+  color: var(--muted);
+}
+
+/* ---------- Turn indicator ---------- */
+.players {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.player {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 10px;
+  border-radius: 12px;
+  border: 2px solid transparent;
+  background: var(--cell);
+  opacity: 0.5;
+  transition: all 0.3s ease;
+}
+
+.player-mark {
+  font-size: 1.5rem;
+  font-weight: 800;
+}
+
+.player-x .player-mark { color: var(--x-color); }
+.player-o .player-mark { color: var(--o-color); }
+
+.player-label {
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.player.active {
+  opacity: 1;
+  transform: scale(1.04);
+}
+
+.player-x.active {
+  border-color: var(--x-color);
+  box-shadow: 0 0 18px rgba(56, 189, 248, 0.35);
+}
+
+.player-o.active {
+  border-color: var(--o-color);
+  box-shadow: 0 0 18px rgba(244, 114, 182, 0.35);
+}
+
+.status {
+  min-height: 1.6em;
+  margin-bottom: 16px;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.status.win  { color: var(--win); animation: pulse 0.9s ease infinite; }
+.status.draw { color: var(--muted); }
+
+/* ---------- Board ---------- */
+.board {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: clamp(8px, 2.5vw, 12px);
+  margin-bottom: 20px;
+}
+
+.cell {
+  aspect-ratio: 1 / 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: clamp(2.4rem, 12vw, 3.6rem);
+  font-weight: 800;
+  font-family: inherit;
+  color: var(--text);
+  background: var(--cell);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: transform 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.cell:hover:not(:disabled) {
+  background: var(--cell-hover);
+  transform: translateY(-4px);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.3);
+}
+
+.cell:active:not(:disabled) {
+  transform: scale(0.95);
+}
+
+.cell:focus-visible,
+.btn:focus-visible {
+  outline: 3px solid var(--win);
+  outline-offset: 2px;
+}
+
+.cell:disabled {
+  cursor: not-allowed;
+}
+
+.cell.x { color: var(--x-color); text-shadow: 0 0 14px rgba(56, 189, 248, 0.6); }
+.cell.o { color: var(--o-color); text-shadow: 0 0 14px rgba(244, 114, 182, 0.6); }
+
+/* Animation when a mark is placed */
+.cell.pop {
+  animation: pop 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes pop {
+  from { transform: scale(0.3); opacity: 0; }
+  to   { transform: scale(1); opacity: 1; }
+}
+
+/* Winning cells */
+.cell.winner {
+  background: rgba(250, 204, 21, 0.18);
+  border-color: var(--win);
+  box-shadow: 0 0 22px rgba(250, 204, 21, 0.55);
+  animation: pulse 0.9s ease infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50%      { transform: scale(1.07); }
+}
+
+/* ---------- Scoreboard ---------- */
+.scoreboard {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.score {
+  flex: 1;
+  padding: 10px 6px;
+  border-radius: 12px;
+  background: var(--cell);
+}
+
+.score-label {
+  display: block;
+  font-size: 0.75rem;
+  color: var(--muted);
+  margin-bottom: 4px;
+}
+
+.score-value {
+  font-size: 1.4rem;
+  font-weight: 700;
+}
+
+.score-x .score-value { color: var(--x-color); }
+.score-o .score-value { color: var(--o-color); }
+
+/* ---------- Buttons ---------- */
+.controls {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.btn {
+  flex: 1;
+  min-width: 130px;
+  padding: 12px 16px;
+  font-size: 1rem;
+  font-weight: 600;
+  font-family: inherit;
+  color: var(--text);
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+}
+
+.btn:active {
+  transform: scale(0.97);
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  box-shadow: 0 6px 16px rgba(99, 102, 241, 0.45);
+}
+
+.btn-primary:hover {
+  box-shadow: 0 10px 22px rgba(99, 102, 241, 0.6);
+}
+
+.btn-secondary {
+  background: var(--cell);
+  border: 1px solid var(--card-border);
+}
+
+.btn-secondary:hover {
+  background: var(--cell-hover);
+}
+
+/* ---------- Small screens ---------- */
+@media (max-width: 420px) {
+  .game { padding: 22px 16px; }
+  .player-label { display: none; }
+  .btn { min-width: 100%; }
+}
+
+/* Respect users who prefer less motion */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
